@@ -4,8 +4,9 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import Rainbow from "../components/Rainbow";
 import Constants from 'expo-constants';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { rainbow } from "rainbow-colors-array-ts";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function App() {
   const [text, setText] = useState("rainbow");
@@ -18,6 +19,23 @@ export default function App() {
   const randomize = () => {
     setRainbowOrder([...rainbowOrder].sort(() => Math.random() - 0.5));
   }
+
+  useEffect(() => {
+      const getData = async() => {
+        let value = await AsyncStorage.getItem("text");
+        if(value !== null) {
+          setText(text);
+        }
+      };
+      getData();
+  }, [])
+
+  useEffect(() => {
+    const storeData = async() => {
+      await AsyncStorage.setItem("text", text);
+    };
+    storeData();
+  }, [text])
 
   return (
     <View style={styles.container}>
